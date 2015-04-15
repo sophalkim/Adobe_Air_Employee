@@ -257,10 +257,8 @@
 	<mx:Accordion id="accordion" width="100%" height="100%" >
 
 		<mx:VBox label="Employees" width="100%" height="100%">
-			
 			<mx:HBox><mx:Button label="Load data" click="getData();"/></mx:HBox>
 			<!--<mx:DataGrid id="resultsGrid" height="100%" width="100%" />-->
-			
 			<mx:DataGrid id="resultsGrid" width="100%" height="100%">
 				<mx:columns>
 					<mx:DataGridColumn dataField="firstName" headerText="First Name"/>
@@ -268,13 +266,8 @@
 					<mx:DataGridColumn dataField="email" headerText="Email" minWidth="240"/>
 					<mx:DataGridColumn dataField="note" headerText="Note"/>
 				</mx:columns>
-			</mx:DataGrid>
-			
-			
+			</mx:DataGrid>	
 		</mx:VBox>
-		
-		
-		
 		
 		<mx:VBox label="Add Employee">
 			<!--<s:Form id="form" defaultButton="{submit}">
@@ -294,14 +287,21 @@
 					<s:Button id="submit" label="Submit" click="sbmt_clickHandler(event);" />
 				</s:FormItem>
 			</s:Form>-->
-			<s:TextInput id="firstName" x="10" y="22"/>
-			<s:TextInput id="lastName" x="9" y="82"/>
-			<s:TextInput id="email" x="9" y="146"/>
-			<s:TextInput id="note" x="9" y="246"/>
-			<s:Label x="10" y="6" text="First"/>
-			<s:Label x="10" y="63" text="Last"/>
-			<s:Label x="10" y="124" text="Salary"/>
-			<s:Button x="204" y="187" height="34" label="Save" click="insertContact(firstName.text, lastName.text, email.text, note.text)"/>
+			<s:Form id="form">
+				<s:FormItem label="First Name*:">
+					<s:TextInput id="firstName" maxChars="64" minWidth="250" />
+				</s:FormItem>
+				<s:FormItem label="Last Name*:">
+					<s:TextInput id="lastName" maxChars="64" minWidth="250"/>
+				</s:FormItem>
+				<s:FormItem label="Email*:">
+					<s:TextInput id="email" maxChars="32" minWidth="250"/>
+				</s:FormItem>
+				<s:FormItem label="Note*:">
+					<s:TextInput id="note" minHeight="150" minWidth="250"/>
+				</s:FormItem>
+				<s:Button label="Save" click="insertContact(firstName.text, lastName.text, email.text, note.text)"/>
+			</s:Form>
 		</mx:VBox>
 		
 		
