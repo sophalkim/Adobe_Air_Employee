@@ -7,20 +7,21 @@
 	
 	<fx:Script>
 		<![CDATA[
+		import flash.data.SQLConnection;
 		import flash.data.SQLResult;
-		import flash.data.SQLConnection;
-		import flash.filesystem.File;
 		import flash.data.SQLStatement;
-		import flash.data.SQLConnection;
+		import flash.filesystem.File;
 		
 		private var conn:SQLConnection;
 		private var createStmt:SQLStatement;
 		private var insertStmt:SQLStatement;
 		private var insertStmt2:SQLStatement;
+		private var insertStmt3:SQLStatement;
 		private var selectStmt:SQLStatement;
 		
 		private var insert1Complete:Boolean = false;
 		private var insert2Complete:Boolean = false;
+		private var insert3Complete:Boolean = false;
 		
 		private function init():void
 		{
@@ -110,7 +111,7 @@
 		insertStmt.sqlConnection = conn;
 		var sql:String = "";
 		sql += "INSERT INTO employees (firstName, lastName, salary) ";
-		sql += "VALUES ('Bob', 'Smith', 8000)";
+		sql += "VALUES ('Bob', 'Smith', '8000')";
 		insertStmt.text = sql;
 		
 		insertStmt.addEventListener(SQLEvent.RESULT, insertResult);
@@ -118,17 +119,26 @@
 		
 		insertStmt.execute();
 		
-		insertStmt2 = new SQLStatement();
-		insertStmt2.sqlConnection = conn;
-		var sql2:String = "";
-		sql2 += "INSERT INTO employees (firstName, lastName, salary) ";
-		sql2 += "VALUES ('John', 'Jones', 8200)";
-		insertStmt2.text = sql2;
 		
-		insertStmt2.addEventListener(SQLEvent.RESULT, insertResult);
-		insertStmt2.addEventListener(SQLErrorEvent.ERROR, insertError);
-		
-		insertStmt2.execute();
+		}
+			
+		private function insertContact(firstName:String, lastName:String, salary:String):void
+		{
+			status = "Adding data to table";
+			
+			insertStmt = new SQLStatement();
+			insertStmt.sqlConnection = conn;
+			var sql:String = "";
+			sql += "INSERT INTO employees (firstName, lastName, salary) ";
+			sql += "VALUES ('"+firstName+"', '"+lastName+"', '"+salary+"')";
+			insertStmt.text = sql;
+			
+			insertStmt.addEventListener(SQLEvent.RESULT, insertResult);
+			insertStmt.addEventListener(SQLErrorEvent.ERROR, insertError);
+			
+			insertStmt.execute();
+			
+			
 		}
 		
 		private function insertResult(event:SQLEvent):void
@@ -225,35 +235,35 @@
 			import mx.validators.Validator;
 			
 			protected function sbmt_clickHandler(evt:MouseEvent):void {
-				var arr:Array = Validator.validateAll(valArr);
+				/*var arr:Array = Validator.validateAll(valArr);
 				if (arr.length == 0) {
 					Alert.show("Form is valid!");
-				}
+				}*/
 				accordion.selectedIndex=2;
 			}
 		]]>
 	</fx:Script>
 
 	<fx:Declarations>
-		<fx:Array id="valArr">
+		<!--<fx:Array id="valArr">
 			<mx:StringValidator id="firstNameVal" source="{firstName}" property="text" required="true" maxLength="64" />
 			<mx:StringValidator id="lastNameVal" source="{lastName}" property="text" required="true" maxLength="32" />
 			<mx:StringValidator id="emailVal" source="{email}" property="text" required="true" maxLength="32" />
 			<mx:SocialSecurityValidator id="noteVal" source="{note}" property="text" required="false" />
-		</fx:Array>
+		</fx:Array>-->
 	</fx:Declarations>
 	
 	<mx:Accordion id="accordion" width="100%" height="100%" >
 
 		<mx:VBox label="Employees" width="100%" height="100%">
-			<!--<mx:DataGrid id="employeeList" width="100%" height="100%">
+			<mx:DataGrid id="employeeList" width="100%" height="100%">
 				<mx:columns>
 					<mx:DataGridColumn dataField="firstName" headerText="First Name"/>
 					<mx:DataGridColumn dataField="lastName" headerText="Last Name"/>
 					<mx:DataGridColumn dataField="email" headerText="Email" minWidth="240"/>
 					<mx:DataGridColumn dataField="note" headerText="Note"/>
 				</mx:columns>
-			</mx:DataGrid>-->
+			</mx:DataGrid>
 			
 			
 		</mx:VBox>
@@ -262,7 +272,7 @@
 		
 		
 		<mx:VBox label="Add Employee">
-			<s:Form id="form" defaultButton="{submit}">
+			<!--<s:Form id="form" defaultButton="{submit}">
 				<s:FormItem label="First Name*:" required="true">
 					<s:TextInput id="firstName" maxChars="64" />
 				</s:FormItem>
@@ -278,7 +288,14 @@
 				<s:FormItem>
 					<s:Button id="submit" label="Submit" click="sbmt_clickHandler(event);" />
 				</s:FormItem>
-			</s:Form>
+			</s:Form>-->
+			<s:TextInput id="firstName" x="10" y="22"/>
+			<s:TextInput id="lastName" x="9" y="82"/>
+			<s:TextInput id="salary" x="9" y="146"/>
+			<s:Label x="10" y="6" text="First"/>
+			<s:Label x="10" y="63" text="Last"/>
+			<s:Label x="10" y="124" text="Salary"/>
+			<s:Button x="204" y="187" height="34" label="Save" click="insertContact(firstName.text, lastName.text, salary.text)"/>
 		</mx:VBox>
 		
 		
