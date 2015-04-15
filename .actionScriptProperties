@@ -17,6 +17,9 @@
     <application path="Practice_Project.mxml">
       <airExcludes/>
     </application>
+    <application path="SimpleDBExampleFlex.mxml">
+      <airExcludes/>
+    </application>
   </applications>
   <modules/>
   <workers/>

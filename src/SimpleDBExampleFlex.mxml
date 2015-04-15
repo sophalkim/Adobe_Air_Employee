@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml" layout="vertical" creationComplete="init();">
+	<mx:Script>
+		<![CDATA[
+			import flash.data.SQLResult;
+			import flash.data.SQLConnection;
+			import flash.filesystem.File;
+			import flash.data.SQLStatement;
+			import flash.data.SQLConnection;
+
+			private var conn:SQLConnection;
+			private var createStmt:SQLStatement;
+			private var insertStmt:SQLStatement;
+			private var insertStmt2:SQLStatement;
+			private var selectStmt:SQLStatement;
+			
+			private var insert1Complete:Boolean = false;
+			private var insert2Complete:Boolean = false;
+			
+			private function init():void
+			{
+				conn = new SQLConnection();
+				conn.addEventListener(SQLEvent.OPEN, openSuccess);
+				conn.addEventListener(SQLErrorEvent.ERROR, openFailure);
+				
+				status = "Creating and opening database";
+				
+				// Use these two lines for an on-disk database
+				// but be aware that the second time you run the app you'll get errors from
+				// creating duplicate records.
+//				var dbFile:File = File.applicationStorageDirectory.resolvePath("DBSample.db");
+//				conn.openAsync(dbFile);
+
+				// Use this line for an in-memory database
+				conn.openAsync(null);
+			}
+			
+			private function openSuccess(event:SQLEvent):void
+			{
+				conn.removeEventListener(SQLEvent.OPEN, openSuccess);
+				conn.removeEventListener(SQLErrorEvent.ERROR, openFailure);
+				
+				createTable();
+			}
+			
+			private function openFailure(event:SQLErrorEvent):void
+			{
+				conn.removeEventListener(SQLEvent.OPEN, openSuccess);
+				conn.removeEventListener(SQLErrorEvent.ERROR, openFailure);
+				
+				status = "Error opening database";
+				
+				trace("event.error.message:", event.error.message);
+				trace("event.error.details:", event.error.details);
+			}
+			
+			private function createTable():void
+			{
+				status = "Creating table";
+				
+				createStmt = new SQLStatement();
+				
+				createStmt.sqlConnection = conn;
+				var sql:String = "";
+				sql += "CREATE TABLE IF NOT EXISTS employees (";
+				sql += "	empId		INTEGER PRIMARY KEY AUTOINCREMENT,";
+				sql += "	firstName	TEXT,";
+				sql += "	lastName	TEXT,";
+				sql += "	salary		NUMERIC CHECK (salary >= 0) DEFAULT 0";
+				sql += ")";
+				createStmt.text = sql;
+				
+				createStmt.addEventListener(SQLEvent.RESULT, createResult);
+				createStmt.addEventListener(SQLErrorEvent.ERROR, createError);
+				
+				createStmt.execute();
+			}
+			
+			private function createResult(event:SQLEvent):void
+			{
+				createStmt.removeEventListener(SQLEvent.RESULT, createResult);
+				createStmt.removeEventListener(SQLErrorEvent.ERROR, createError);
+				
+				addData();
+			}
+
+			private function createError(event:SQLErrorEvent):void
+			{
+				status = "Error creating table";
+				
+				createStmt.removeEventListener(SQLEvent.RESULT, createResult);
+				createStmt.removeEventListener(SQLErrorEvent.ERROR, createError);
+				
+				trace("CREATE TABLE error:", event.error);
+				trace("event.error.message:", event.error.message);
+				trace("event.error.details:", event.error.details);
+			}
+			
+			
+			private function addData():void
+			{
+				status = "Adding data to table";
+				
+				insertStmt = new SQLStatement();
+				insertStmt.sqlConnection = conn;
+				var sql:String = "";
+				sql += "INSERT INTO employees (firstName, lastName, salary) ";
+				sql += "VALUES ('Bob', 'Smith', 8000)";
+				insertStmt.text = sql;
+				
+				insertStmt.addEventListener(SQLEvent.RESULT, insertResult);
+				insertStmt.addEventListener(SQLErrorEvent.ERROR, insertError);
+				
+				insertStmt.execute();
+				
+				insertStmt2 = new SQLStatement();
+				insertStmt2.sqlConnection = conn;
+				var sql2:String = "";
+				sql2 += "INSERT INTO employees (firstName, lastName, salary) ";
+				sql2 += "VALUES ('John', 'Jones', 8200)";
+				insertStmt2.text = sql2;
+				
+				insertStmt2.addEventListener(SQLEvent.RESULT, insertResult);
+				insertStmt2.addEventListener(SQLErrorEvent.ERROR, insertError);
+				
+				insertStmt2.execute();
+			}
+			
+			private function insertResult(event:SQLEvent):void
+			{
+				var stmt:SQLStatement = event.target as SQLStatement;
+				stmt.removeEventListener(SQLEvent.RESULT, insertResult);
+				stmt.removeEventListener(SQLErrorEvent.ERROR, insertError);
+				
+				if (stmt == insertStmt)
+				{
+					insert1Complete = true;
+				}
+				else
+				{
+					insert2Complete = true;
+				}
+				
+				if (insert1Complete && insert2Complete)
+				{
+					status = "Ready to load data";
+				
+//					getData();
+				}
+			}
+			
+			private function insertError(event:SQLErrorEvent):void
+			{
+				status = "Error inserting data";
+				
+				insertStmt.removeEventListener(SQLEvent.RESULT, insertResult);
+				insertStmt.removeEventListener(SQLErrorEvent.ERROR, insertError);
+				
+				trace("INSERT error:", event.error);
+				trace("event.error.message:", event.error.message);
+				trace("event.error.details:", event.error.details);
+			}
+			
+			
+			private function getData():void
+			{
+				status = "Loading data";
+				
+				selectStmt = new SQLStatement();
+				selectStmt.sqlConnection = conn;
+				var sql:String = "SELECT empId, firstName, lastName, salary FROM employees";
+				selectStmt.text = sql;
+				
+				selectStmt.addEventListener(SQLEvent.RESULT, selectResult);
+				selectStmt.addEventListener(SQLErrorEvent.ERROR, selectError);
+				
+				selectStmt.execute();
+			}
+			
+			private function selectResult(event:SQLEvent):void
+			{
+				status = "Data loaded";
+				
+				selectStmt.removeEventListener(SQLEvent.RESULT, selectResult);
+				selectStmt.removeEventListener(SQLErrorEvent.ERROR, selectError);
+				
+				var result:SQLResult = selectStmt.getResult();
+				
+				resultsGrid.dataProvider = result.data;
+				
+//				var numRows:int = result.data.length;
+//				for (var i:int = 0; i < numRows; i++)
+//				{
+//					var output:String = "";
+//					for (var prop:String in result.data[i])
+//					{
+//						output += prop + ": " + result.data[i][prop] + "; ";
+//					}
+//					trace("row[" + i.toString() + "]\t", output);
+//				}				
+			}
+			
+			private function selectError(event:SQLErrorEvent):void
+			{
+				status = "Error loading data";
+				
+				selectStmt.removeEventListener(SQLEvent.RESULT, selectResult);
+				selectStmt.removeEventListener(SQLErrorEvent.ERROR, selectError);
+				
+				trace("SELECT error:", event.error);
+				trace("event.error.message:", event.error.message);
+				trace("event.error.details:", event.error.details);
+			}
+		]]>
+	</mx:Script>
+
+	<mx:HBox><mx:Button label="Load data" click="getData();"/></mx:HBox>
+	<mx:DataGrid id="resultsGrid" height="100%" width="100%"/>
+</mx:WindowedApplication>

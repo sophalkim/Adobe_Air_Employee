@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<application xmlns="http://ns.adobe.com/air/application/3.1">
+	<id>com.adobe.air.examples.flex.SimpleDBExampleFlex</id>
+	<version>beta3</version>
+	<filename>Simple local database example (Flex)</filename>
+	<name>Simple local database example -- Flex-Based AIR Example</name>
+	<installFolder>Adobe/AIR Examples</installFolder>
+	<programMenuFolder>Adobe/AIR Examples</programMenuFolder>
+	<description>An example application for Adobe AIR. A simple database application that demonstrates creating a database, connecting to it, creating a table, adding data to it, and retrieving data from it.</description>
+	<copyright>© 2007 Adobe Systems Inc.</copyright>
+	<initialWindow>
+		<title>Simple local database example</title>
+		<content>!ApolloApplicationWizardPage.rootContentValue!</content>
+		<systemChrome>standard</systemChrome>
+		<transparent>false</transparent>
+		<visible>false</visible>
+		<minimizable>true</minimizable>
+		<maximizable>true</maximizable>
+		<resizable>true</resizable>
+		<width>640</width>
+		<height>480</height>
+		<x>150</x>
+		<y>150</y>
+	</initialWindow>
+	<icon>
+		<image16x16>icons/AIRApp_16.png</image16x16>
+		<image32x32>icons/AIRApp_32.png</image32x32>
+		<image48x48>icons/AIRApp_48.png</image48x48>
+		<image128x128>icons/AIRApp_128.png</image128x128>
+	</icon>
+</application>
