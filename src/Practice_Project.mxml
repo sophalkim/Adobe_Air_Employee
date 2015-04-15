@@ -120,6 +120,30 @@
 		
 		insertStmt.execute();
 		
+		insertStmt2 = new SQLStatement();
+		insertStmt2.sqlConnection = conn;
+		var sql2:String = "";
+		sql2 += "INSERT INTO employees (firstName, lastName, email, note) ";
+		sql2 += "VALUES ('Georgy', 'White', 'gorge@yahoo.com', 'Game of Thrones')";
+		insertStmt2.text = sql2;
+		
+		insertStmt2.addEventListener(SQLEvent.RESULT, insertResult);
+		insertStmt2.addEventListener(SQLErrorEvent.ERROR, insertError);
+		
+		insertStmt2.execute();
+		
+		insertStmt3 = new SQLStatement();
+		insertStmt3.sqlConnection = conn;
+		var sql3:String = "";
+		sql3 += "INSERT INTO employees (firstName, lastName, email, note) ";
+		sql3 += "VALUES ('Mickey', 'Mouse', 'mickey@gmail.com', 'Mad Men')";
+		insertStmt3.text = sql3;
+		
+		insertStmt3.addEventListener(SQLEvent.RESULT, insertResult);
+		insertStmt3.addEventListener(SQLErrorEvent.ERROR, insertError);
+		
+		insertStmt3.execute();
+		
 		
 		}
 			
@@ -306,12 +330,12 @@
 				<s:FormItem label="Note*:">
 					<s:TextInput id="note" minHeight="150" minWidth="250"/>
 				</s:FormItem>
-				<s:HGroup >
-					<s:Button label="cancel" click="cancel()"/>
-					<s:Button label="Save" click="insertContact(firstName.text, lastName.text, email.text, note.text)"/>
+				<s:HGroup>
+					<s:Button label="cancel" click="cancel()" />
+					<s:Button label="Save" click="insertContact(firstName.text, lastName.text, email.text, note.text)" />
 				</s:HGroup>
-				
 			</s:Form>
+			
 		</mx:VBox>
 		
 		
