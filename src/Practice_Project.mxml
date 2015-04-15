@@ -72,7 +72,8 @@
 		sql += "	empId		INTEGER PRIMARY KEY AUTOINCREMENT,";
 		sql += "	firstName	TEXT,";
 		sql += "	lastName	TEXT,";
-		sql += "	salary		NUMERIC CHECK (salary >= 0) DEFAULT 0";
+		sql += "	email		TEXT,";
+		sql += "	note		TEXT";
 		sql += ")";
 		createStmt.text = sql;
 		
@@ -110,8 +111,8 @@
 		insertStmt = new SQLStatement();
 		insertStmt.sqlConnection = conn;
 		var sql:String = "";
-		sql += "INSERT INTO employees (firstName, lastName, salary) ";
-		sql += "VALUES ('Bob', 'Smith', '8000')";
+		sql += "INSERT INTO employees (firstName, lastName, email, note) ";
+		sql += "VALUES ('Bob', 'Smith', 'bobsmith@aol.com', 'Hi there')";
 		insertStmt.text = sql;
 		
 		insertStmt.addEventListener(SQLEvent.RESULT, insertResult);
@@ -122,15 +123,15 @@
 		
 		}
 			
-		private function insertContact(firstName:String, lastName:String, salary:String):void
+		private function insertContact(firstName:String, lastName:String, email:String, note:String):void
 		{
 			status = "Adding data to table";
 			
 			insertStmt = new SQLStatement();
 			insertStmt.sqlConnection = conn;
 			var sql:String = "";
-			sql += "INSERT INTO employees (firstName, lastName, salary) ";
-			sql += "VALUES ('"+firstName+"', '"+lastName+"', '"+salary+"')";
+			sql += "INSERT INTO employees (firstName, lastName, email, note) ";
+			sql += "VALUES ('"+firstName+"', '"+lastName+"', '"+email+"', '"+note+"')";
 			insertStmt.text = sql;
 			
 			insertStmt.addEventListener(SQLEvent.RESULT, insertResult);
@@ -183,7 +184,7 @@
 		
 		selectStmt = new SQLStatement();
 		selectStmt.sqlConnection = conn;
-		var sql:String = "SELECT empId, firstName, lastName, salary FROM employees";
+		var sql:String = "SELECT firstName, lastName, email, note FROM employees";
 		selectStmt.text = sql;
 		
 		selectStmt.addEventListener(SQLEvent.RESULT, selectResult);
@@ -256,14 +257,18 @@
 	<mx:Accordion id="accordion" width="100%" height="100%" >
 
 		<mx:VBox label="Employees" width="100%" height="100%">
-			<mx:DataGrid id="employeeList" width="100%" height="100%">
+			
+			<mx:HBox><mx:Button label="Load data" click="getData();"/></mx:HBox>
+			<mx:DataGrid id="resultsGrid" height="100%" width="100%"/>
+			
+			<!--<mx:DataGrid id="employeeList" width="100%" height="100%">
 				<mx:columns>
 					<mx:DataGridColumn dataField="firstName" headerText="First Name"/>
 					<mx:DataGridColumn dataField="lastName" headerText="Last Name"/>
 					<mx:DataGridColumn dataField="email" headerText="Email" minWidth="240"/>
 					<mx:DataGridColumn dataField="note" headerText="Note"/>
 				</mx:columns>
-			</mx:DataGrid>
+			</mx:DataGrid>-->
 			
 			
 		</mx:VBox>
@@ -291,22 +296,22 @@
 			</s:Form>-->
 			<s:TextInput id="firstName" x="10" y="22"/>
 			<s:TextInput id="lastName" x="9" y="82"/>
-			<s:TextInput id="salary" x="9" y="146"/>
+			<s:TextInput id="email" x="9" y="146"/>
+			<s:TextInput id="note" x="9" y="246"/>
 			<s:Label x="10" y="6" text="First"/>
 			<s:Label x="10" y="63" text="Last"/>
 			<s:Label x="10" y="124" text="Salary"/>
-			<s:Button x="204" y="187" height="34" label="Save" click="insertContact(firstName.text, lastName.text, salary.text)"/>
+			<s:Button x="204" y="187" height="34" label="Save" click="insertContact(firstName.text, lastName.text, email.text, note.text)"/>
 		</mx:VBox>
 		
 		
 		
 		
 		<mx:VBox label="Thank You Page" width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
-			<!--<s:VGroup width="100%" height="100%" verticalAlign="middle" horizontalAlign="center"> 
+			<s:VGroup width="100%" height="100%" verticalAlign="middle" horizontalAlign="center"> 
 				<s:Label text="Thank you for Submitting the Form." fontSize="40"/>
-			</s:VGroup>-->	
-			<mx:HBox><mx:Button label="Load data" click="getData();"/></mx:HBox>
-			<mx:DataGrid id="resultsGrid" height="100%" width="100%"/>
+			</s:VGroup>	
+			
 			
 		</mx:VBox>
 		
