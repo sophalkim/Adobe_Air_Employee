@@ -227,7 +227,13 @@
 		trace("event.error.message:", event.error.message);
 		trace("event.error.details:", event.error.details);
 		}
+			
+		private function cancel():void {
+			accordion.selectedIndex=0;
+		}
+			
 		]]>
+		
 	</fx:Script>
 	
 	<fx:Script>
@@ -300,7 +306,11 @@
 				<s:FormItem label="Note*:">
 					<s:TextInput id="note" minHeight="150" minWidth="250"/>
 				</s:FormItem>
-				<s:Button label="Save" click="insertContact(firstName.text, lastName.text, email.text, note.text)"/>
+				<s:HGroup >
+					<s:Button label="cancel" click="cancel()"/>
+					<s:Button label="Save" click="insertContact(firstName.text, lastName.text, email.text, note.text)"/>
+				</s:HGroup>
+				
 			</s:Form>
 		</mx:VBox>
 		
